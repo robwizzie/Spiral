@@ -17,92 +17,158 @@ struct AchievementPopup: View {
 
     var body: some View {
         ZStack {
-            // Semi-transparent background
-            Color.black.opacity(0.7)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    dismiss()
-                }
+            // Blurred background with animated gradient
+            ZStack {
+                AnimatedGradientBackground(speed: 15.0)
+                    .blur(radius: 20)
+                Color.black.opacity(0.6)
+            }
+            .ignoresSafeArea()
+            .onTapGesture {
+                dismiss()
+            }
 
-            // Popup card
-            VStack(spacing: 20) {
-                // Trophy icon
-                Text("🏆")
-                    .font(.system(size: 60))
-
-                // Achievement unlocked text
-                Text("ACHIEVEMENT UNLOCKED")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .tracking(2)
-
-                // Achievement name with emoji
-                HStack(spacing: 8) {
-                    Text(achievement.emoji)
-                        .font(.system(size: 32))
-                    Text(achievement.displayName)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
-                }
-
-                // Description
-                Text(achievement.description)
-                    .font(.system(size: 15))
-                    .foregroundColor(.white.opacity(0.8))
-                    .multilineTextAlignment(.center)
-
-                // Divider
-                Rectangle()
-                    .fill(Color.white.opacity(0.2))
-                    .frame(height: 1)
-                    .padding(.horizontal)
-
-                // Rarity/Type indicator
-                Text(achievement.isPositive ? "You're crushing it! 💪" : "Uhh... congrats? 😅")
-                    .font(.caption)
-                    .foregroundColor(achievement.isPositive ? .successGreen : .warningOrange)
-
-                // Action buttons
-                HStack(spacing: 12) {
-                    Button(action: onShare) {
-                        HStack {
-                            Image(systemName: "square.and.arrow.up")
-                            Text("Share")
-                        }
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            LinearGradient(
-                                colors: [Color.electricBlue, Color.neonPurple],
-                                startPoint: .leading,
-                                endPoint: .trailing
+            // Popup card with enhanced visuals
+            VStack(spacing: 24) {
+                // Massive trophy icon with glow and pulse
+                ZStack {
+                    // Outer glow ring
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    (achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.4),
+                                    .clear
+                                ],
+                                center: .center,
+                                startRadius: 50,
+                                endRadius: 120
                             )
                         )
-                        .cornerRadius(12)
+                        .frame(width: 240, height: 240)
+                        .pulse(from: 0.9, to: 1.1, duration: 2)
+
+                    Text("🏆")
+                        .font(.system(size: 90))
+                        .shadow(color: (achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.8), radius: 30)
+                }
+
+                // Achievement unlocked text with gradient and glow
+                Text("ACHIEVEMENT UNLOCKED")
+                    .font(.system(size: 18, weight: .black, design: .rounded))
+                    .tracking(4)
+                    .gradientForeground(colors: [
+                        achievement.isPositive ? .successGreen : .warningOrange,
+                        .electricBlue
+                    ])
+                    .neonGlow(color: achievement.isPositive ? .successGreen : .warningOrange, radius: 12)
+
+                // Achievement name with emoji - BIGGER
+                VStack(spacing: 10) {
+                    Text(achievement.emoji)
+                        .font(.system(size: 56))
+
+                    Text(achievement.displayName)
+                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                }
+
+                // Description with better styling
+                Text(achievement.description)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(.white.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+                    .padding(.horizontal, 10)
+
+                // Divider
+                Divider()
+                    .background(Color.white.opacity(0.3))
+                    .padding(.horizontal, 20)
+
+                // Rarity/Type indicator with badge
+                Text(achievement.isPositive ? "You're crushing it! 💪" : "Uhh... congrats? 😅")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(
+                        Capsule()
+                            .fill((achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.2))
+                            .overlay(
+                                Capsule()
+                                    .stroke(achievement.isPositive ? Color.successGreen : Color.warningOrange, lineWidth: 2)
+                            )
+                    )
+
+                // Action buttons with enhanced styling
+                VStack(spacing: 12) {
+                    // Share button with shimmer
+                    Button(action: {
+                        HapticsManager.shared.mediumImpact()
+                        onShare()
+                    }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 18, weight: .bold))
+                            Text("Share Achievement")
+                                .font(.system(size: 17, weight: .bold, design: .rounded))
+                                .tracking(1)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            ZStack {
+                                LinearGradient(
+                                    colors: [Color.electricBlue, Color.neonPurple],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+
+                                LinearGradient(
+                                    colors: [
+                                        .clear,
+                                        .white.opacity(0.3),
+                                        .clear
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                                .shimmer()
+                            }
+                        )
+                        .cornerRadius(16)
+                        .neonGlow(color: .electricBlue, radius: 12)
                     }
 
-                    Button(action: dismiss) {
+                    // Dismiss button
+                    Button(action: {
+                        HapticsManager.shared.lightTap()
+                        dismiss()
+                    }) {
                         Text("Cool, thanks")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
                             .foregroundColor(.electricBlue)
                             .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.white.opacity(0.1))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.electricBlue, lineWidth: 2)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(Color.white.opacity(0.05))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color.electricBlue.opacity(0.5), lineWidth: 2)
+                                    )
                             )
-                            .cornerRadius(12)
                     }
                 }
             }
-            .padding(30)
-            .background(Color.deepPurple)
-            .cornerRadius(20)
-            .shadow(color: achievement.isPositive ? Color.successGreen.opacity(0.3) : Color.warningOrange.opacity(0.3), radius: 20, x: 0, y: 10)
-            .padding(.horizontal, 40)
+            .padding(.vertical, 40)
+            .padding(.horizontal, 30)
+            .glassmorphicCard(cornerRadius: 28, shadowRadius: 40)
+            .padding(.horizontal, 35)
             .scaleEffect(scale)
             .opacity(opacity)
         }
@@ -115,8 +181,6 @@ struct AchievementPopup: View {
             // Haptic feedback and sound
             HapticsManager.shared.playAchievementPattern()
             SoundManager.shared.play(.achievement)
-
-            // Confetti effect would go here in full implementation
         }
     }
 
