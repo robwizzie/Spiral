@@ -42,9 +42,16 @@ class StatsViewModel: ObservableObject {
     }
 
     private func loadTodayStats() {
+        let today = Date()
+        let startOfDay = Calendar.current.startOfDay(for: today)
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        let endOfDay = Calendar.current.date(byAdding: components, to: startOfDay) ?? today
+        
         let descriptor = FetchDescriptor<UserStats>(
             predicate: #Predicate { stats in
-                stats.date >= Date().startOfDay && stats.date <= Date().endOfDay
+                stats.date >= startOfDay && stats.date <= endOfDay
             }
         )
 
@@ -98,9 +105,16 @@ class StatsViewModel: ObservableObject {
     }
 
     private func loadTopApps() {
+        let today = Date()
+        let startOfDay = Calendar.current.startOfDay(for: today)
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        let endOfDay = Calendar.current.date(byAdding: components, to: startOfDay) ?? today
+        
         let descriptor = FetchDescriptor<UserStats>(
             predicate: #Predicate { stats in
-                stats.date >= Date().startOfDay && stats.date <= Date().endOfDay
+                stats.date >= startOfDay && stats.date <= endOfDay
             }
         )
 
@@ -121,10 +135,18 @@ class StatsViewModel: ObservableObject {
     // MARK: - Update Stats
 
     func updateDoomScore() {
+        // Calculate date range for today
+        let today = Date()
+        let startOfDay = Calendar.current.startOfDay(for: today)
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        let endOfDay = Calendar.current.date(byAdding: components, to: startOfDay) ?? today
+        
         // Fetch today's sessions
         let descriptor = FetchDescriptor<ScrollSession>(
             predicate: #Predicate { session in
-                session.startTime >= Date().startOfDay && session.startTime <= Date().endOfDay
+                session.startTime >= startOfDay && session.startTime <= endOfDay
             }
         )
 
@@ -135,7 +157,7 @@ class StatsViewModel: ObservableObject {
             // Update today's stats
             let statsDescriptor = FetchDescriptor<UserStats>(
                 predicate: #Predicate { stats in
-                    stats.date >= Date().startOfDay && stats.date <= Date().endOfDay
+                    stats.date >= startOfDay && stats.date <= endOfDay
                 }
             )
 
@@ -161,9 +183,15 @@ class StatsViewModel: ObservableObject {
         var checkDate = Date()
 
         while true {
+            let startOfDay = calendar.startOfDay(for: checkDate)
+            var components = DateComponents()
+            components.day = 1
+            components.second = -1
+            let endOfDay = calendar.date(byAdding: components, to: startOfDay) ?? checkDate
+            
             let descriptor = FetchDescriptor<UserStats>(
                 predicate: #Predicate { stats in
-                    stats.date >= checkDate.startOfDay && stats.date <= checkDate.endOfDay
+                    stats.date >= startOfDay && stats.date <= endOfDay
                 }
             )
 
@@ -185,9 +213,16 @@ class StatsViewModel: ObservableObject {
         }
 
         // Update stats
+        let today = Date()
+        let startOfDay = Calendar.current.startOfDay(for: today)
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        let endOfDay = Calendar.current.date(byAdding: components, to: startOfDay) ?? today
+        
         let descriptor = FetchDescriptor<UserStats>(
             predicate: #Predicate { stats in
-                stats.date >= Date().startOfDay && stats.date <= Date().endOfDay
+                stats.date >= startOfDay && stats.date <= endOfDay
             }
         )
 
