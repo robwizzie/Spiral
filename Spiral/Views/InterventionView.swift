@@ -13,91 +13,44 @@ struct InterventionView: View {
 
     var body: some View {
         ZStack {
-            // Animated gradient background
-            AnimatedGradientBackground(
-                colors: [.deepPurple, .neonPurple, .electricBlue],
-                speed: 12.0
-            )
-
-            // Floating particles for depth and urgency
-            ParticleField(count: 20, colors: [.electricBlue, .neonPurple, .alertRed])
-                .opacity(0.5)
+            // Clean background
+            CleanBackground()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 30) {
-                    Spacer(minLength: 40)
+                VStack(spacing: 28) {
+                    Spacer(minLength: 30)
 
-                    // Dramatic spiral animation with enhanced glow
-                    ZStack {
-                        // Outer warning pulse
-                        Circle()
-                            .fill(
-                                RadialGradient(
-                                    colors: [
-                                        Color.alertRed.opacity(0.5),
-                                        Color.neonPurple.opacity(0.3),
-                                        .clear
-                                    ],
-                                    center: .center,
-                                    startRadius: 100,
-                                    endRadius: 220
-                                )
-                            )
-                            .frame(width: 440, height: 440)
-                            .pulse(from: 0.85, to: 1.15, duration: 2)
+                    // Spiral - clean and focused
+                    SpiralAnimation(state: .breaking, size: 160)
+                        .subtleGlow(color: .electricBlue, radius: 8)
+                        .padding(.bottom, 10)
 
-                        // Inner intense glow
-                        Circle()
-                            .fill(
-                                RadialGradient(
-                                    colors: [
-                                        Color.electricBlue.opacity(0.8),
-                                        Color.neonPurple.opacity(0.4),
-                                        .clear
-                                    ],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 140
-                                )
-                            )
-                            .frame(width: 280, height: 280)
-                            .blur(radius: 30)
-
-                        SpiralAnimation(state: .breaking, size: 240)
-                            .neonGlow(color: .electricBlue, radius: 35)
-                    }
-                    .padding(.bottom, 10)
-
-                    // DRAMATIC header with gradient and glow
+                    // Header
                     Text(viewModel.interventionHeader)
-                        .font(.system(size: 42, weight: .black, design: .rounded))
-                        .tracking(2)
-                        .gradientForeground(colors: [.electricBlue, .neonPurple, .electricBlue])
-                        .neonGlow(color: .neonPurple, radius: 18)
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
-                    // Duration message with larger font
+                    // Duration message
                     Text(viewModel.durationMessage)
-                        .font(.system(size: 20, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.9))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
 
-                    // MASSIVE roast message in glassmorphic card
+                    // Roast message - hero element
                     VStack(spacing: 12) {
                         Text("💬")
-                            .font(.system(size: 50))
+                            .font(.system(size: 40))
 
                         Text(viewModel.roastMessage)
-                            .font(.system(size: 26, weight: .bold, design: .rounded))
+                            .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
-                            .lineSpacing(6)
+                            .lineSpacing(4)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .padding(.vertical, 30)
-                    .padding(.horizontal, 25)
-                    .glassmorphicCard(cornerRadius: 24, shadowRadius: 30)
+                    .accentCard(color: .electricBlue, padding: 24)
                     .padding(.horizontal)
 
                     // Mode-specific content
@@ -109,7 +62,7 @@ struct InterventionView: View {
                         quickResponseButtons
                     }
 
-                    // Optional note (only for gentle and accountability after timer)
+                    // Optional note
                     if viewModel.mode != .lockdown || viewModel.taskCompleted {
                         optionalNoteField
                     }
@@ -121,7 +74,6 @@ struct InterventionView: View {
 
                     Spacer(minLength: 30)
                 }
-                .padding(.horizontal, 5)
             }
         }
         .onAppear {
@@ -133,23 +85,12 @@ struct InterventionView: View {
     // MARK: - Quick Response Buttons
 
     private var quickResponseButtons: some View {
-        VStack(spacing: 16) {
-            Text("HOW WAS IT?")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .tracking(3)
-                .foregroundColor(.white.opacity(0.7))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-
-            VStack(spacing: 14) {
-                responseButton("Worth it - saw good stuff ✓", icon: "checkmark.circle.fill", type: .worthIt, color: .successGreen)
-                responseButton("Total waste - help me stop 🛑", icon: "hand.raised.fill", type: .waste, color: .alertRed)
-                responseButton("Just taking a break 😌", icon: "moon.stars.fill", type: .justBreak, color: .electricBlue)
-            }
+        VStack(spacing: 12) {
+            responseButton("Worth it - saw good stuff ✓", icon: "checkmark.circle.fill", type: .worthIt, color: .successGreen)
+            responseButton("Total waste - help me stop 🛑", icon: "hand.raised.fill", type: .waste, color: .alertRed)
+            responseButton("Just taking a break 😌", icon: "moon.stars.fill", type: .justBreak, color: .electricBlue)
         }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 16)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 25)
+        .modernCard(padding: 16)
         .padding(.horizontal)
     }
 
@@ -158,50 +99,40 @@ struct InterventionView: View {
             HapticsManager.shared.mediumImpact()
             viewModel.recordResponse(type, note: viewModel.note)
         }) {
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(color.opacity(0.2))
-                        .frame(width: 50, height: 50)
+                        .fill(color.opacity(0.15))
+                        .frame(width: 40, height: 40)
 
                     Image(systemName: icon)
-                        .font(.system(size: 22, weight: .semibold))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(color)
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(text)
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                }
-
-                Spacer()
+                Text(text)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 if viewModel.selectedResponse == type {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 28, weight: .bold))
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(color)
-                        .neonGlow(color: color, radius: 8)
                 }
             }
-            .padding(18)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 12)
             .background(
-                ZStack {
-                    if viewModel.selectedResponse == type {
-                        RoundedRectangle(cornerRadius: 18)
-                            .fill(color.opacity(0.15))
-                        RoundedRectangle(cornerRadius: 18)
-                            .stroke(color, lineWidth: 2)
-                            .neonGlow(color: color, radius: 6)
-                    } else {
-                        RoundedRectangle(cornerRadius: 18)
-                            .fill(Color.white.opacity(0.05))
-                        RoundedRectangle(cornerRadius: 18)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                    }
-                }
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(viewModel.selectedResponse == type ? color.opacity(0.1) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        viewModel.selectedResponse == type ? color : Color.white.opacity(0.1),
+                        lineWidth: viewModel.selectedResponse == type ? 2 : 0.5
+                    )
             )
         }
     }
@@ -209,154 +140,100 @@ struct InterventionView: View {
     // MARK: - Accountability Mode Timer
 
     private var accountabilityTimerView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             Text("THINK ABOUT IT")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .tracking(3)
-                .foregroundColor(.white.opacity(0.7))
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .tracking(2)
+                .foregroundColor(.secondary)
 
+            // Clean timer display
             ZStack {
-                // Outer glow ring
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [
-                                Color.warningOrange.opacity(0.3),
-                                .clear
-                            ],
-                            center: .center,
-                            startRadius: 80,
-                            endRadius: 140
-                        )
-                    )
-                    .frame(width: 280, height: 280)
-                    .pulse(from: 0.9, to: 1.1, duration: 1.5)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 10)
+                    .frame(width: 140, height: 140)
 
-                // Background ring
-                Circle()
-                    .stroke(Color.white.opacity(0.15), lineWidth: 14)
-                    .frame(width: 200, height: 200)
-
-                // Animated progress ring
                 Circle()
                     .trim(from: 0, to: CGFloat(viewModel.waitTime) / CGFloat(AppConstants.accountabilityWaitTime))
-                    .stroke(
-                        AngularGradient(
-                            colors: [
-                                Color.warningOrange,
-                                Color.electricBlue,
-                                Color.warningOrange
-                            ],
-                            center: .center
-                        ),
-                        style: StrokeStyle(lineWidth: 14, lineCap: .round)
-                    )
-                    .frame(width: 200, height: 200)
+                    .stroke(Color.warningOrange, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .frame(width: 140, height: 140)
                     .rotationEffect(.degrees(-90))
-                    .shadow(color: Color.warningOrange.opacity(0.8), radius: 15)
 
-                // Timer display
-                VStack(spacing: 4) {
+                VStack(spacing: 2) {
                     Text("\(viewModel.waitTime)")
-                        .font(.system(size: 72, weight: .black, design: .rounded))
-                        .gradientForeground(colors: [.warningOrange, .electricBlue])
-                        .neonGlow(color: .warningOrange, radius: 12)
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
 
                     Text("seconds")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.secondary)
                 }
             }
 
             Text("Dismiss available soon")
-                .font(.system(size: 18, weight: .medium, design: .rounded))
-                .foregroundColor(.white.opacity(0.8))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(.secondary)
 
             if viewModel.dismissalsToday > 0 {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 14))
+                        .font(.system(size: 12))
                     Text("Dismissals today: \(viewModel.dismissalsToday)/\(AppConstants.maxDismissalsPerDay)")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 13, weight: .medium))
                 }
                 .foregroundColor(.warningOrange)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
                 .background(
                     Capsule()
                         .fill(Color.warningOrange.opacity(0.15))
-                        .overlay(
-                            Capsule()
-                                .stroke(Color.warningOrange.opacity(0.5), lineWidth: 1)
-                        )
                 )
             }
         }
-        .padding(.vertical, 30)
-        .padding(.horizontal, 20)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 25)
+        .modernCard(padding: 24)
         .padding(.horizontal)
     }
 
     // MARK: - Lockdown Mode Challenge
 
     private var lockdownChallengeView: some View {
-        VStack(spacing: 28) {
-            // Challenge header
-            VStack(spacing: 12) {
-                Text("🔒 LOCKDOWN MODE")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .tracking(3)
-                    .foregroundColor(.alertRed)
+        VStack(spacing: 20) {
+            Text("🔒 LOCKDOWN MODE")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .tracking(2)
+                .foregroundColor(.alertRed)
 
-                Text("Complete a task to continue")
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.9))
-            }
+            Text("Complete a task to continue")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.secondary)
 
-            // Math challenge card
-            VStack(spacing: 20) {
+            // Math challenge
+            VStack(spacing: 16) {
                 Text("🧮")
-                    .font(.system(size: 50))
-
-                Text("SOLVE THIS")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .tracking(2)
-                    .foregroundColor(.white.opacity(0.6))
+                    .font(.system(size: 36))
 
                 Text(viewModel.lockdownChallenge)
-                    .font(.system(size: 48, weight: .black, design: .rounded))
-                    .gradientForeground(colors: [.electricBlue, .neonPurple])
-                    .neonGlow(color: .electricBlue, radius: 10)
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.electricBlue)
 
                 TextField("", text: $viewModel.userAnswer)
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .keyboardType(.numberPad)
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: 12)
                             .fill(Color.white.opacity(0.1))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.electricBlue.opacity(0.5), lineWidth: 2)
-                            )
                     )
-                    .frame(width: 180)
+                    .frame(width: 150)
                     .onChange(of: viewModel.userAnswer) { _, _ in
                         viewModel.checkAnswer()
                     }
             }
-            .padding(.vertical, 30)
-            .padding(.horizontal, 25)
+            .padding(20)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(Color.alertRed.opacity(0.1))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.alertRed.opacity(0.3), lineWidth: 2)
-                    )
             )
 
             // OR divider
@@ -365,162 +242,112 @@ struct InterventionView: View {
                     .fill(Color.white.opacity(0.2))
                     .frame(height: 1)
                 Text("OR")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white.opacity(0.5))
-                    .padding(.horizontal, 12)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 10)
                 Rectangle()
                     .fill(Color.white.opacity(0.2))
                     .frame(height: 1)
             }
 
             // Wait timer option
-            VStack(spacing: 12) {
-                Button(action: {
-                    HapticsManager.shared.mediumImpact()
-                    viewModel.startWaitTimer()
-                }) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: 20, weight: .bold))
+            Button(action: {
+                HapticsManager.shared.mediumImpact()
+                viewModel.startWaitTimer()
+            }) {
+                HStack(spacing: 10) {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 16, weight: .medium))
 
-                        Text(viewModel.waitTime > 0 ? "Waiting... \(viewModel.waitTime)s" : "Wait 60 seconds instead")
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
-                    }
-                    .foregroundColor(viewModel.waitTime > 0 ? .warningOrange : .white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 18)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.white.opacity(viewModel.waitTime > 0 ? 0.15 : 0.08))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(
-                                        viewModel.waitTime > 0 ? Color.warningOrange : Color.white.opacity(0.3),
-                                        lineWidth: 2
-                                    )
-                            )
-                    )
+                    Text(viewModel.waitTime > 0 ? "Waiting... \(viewModel.waitTime)s" : "Wait 60 seconds instead")
+                        .font(.system(size: 15, weight: .medium))
                 }
-                .disabled(viewModel.waitTime > 0)
+                .foregroundColor(viewModel.waitTime > 0 ? .warningOrange : .white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.08))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            viewModel.waitTime > 0 ? Color.warningOrange : Color.white.opacity(0.2),
+                            lineWidth: 1
+                        )
+                )
+            }
+            .disabled(viewModel.waitTime > 0)
 
-                if viewModel.waitTime > 0 {
-                    // Progress bar for wait time
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.white.opacity(0.1))
-                                .frame(height: 8)
-
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [.warningOrange, .electricBlue],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .frame(
-                                    width: geometry.size.width * (1.0 - CGFloat(viewModel.waitTime) / 60.0),
-                                    height: 8
-                                )
-                        }
-                    }
-                    .frame(height: 8)
-                }
+            if viewModel.waitTime > 0 {
+                ProgressView(value: 1.0 - Double(viewModel.waitTime) / 60.0)
+                    .tint(.warningOrange)
             }
         }
-        .padding(.vertical, 30)
-        .padding(.horizontal, 20)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 25)
+        .modernCard(padding: 24)
         .padding(.horizontal)
     }
 
     // MARK: - Optional Note Field
 
     private var optionalNoteField: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 6) {
                 Image(systemName: "note.text")
-                    .font(.system(size: 16, weight: .semibold))
-                Text("OPTIONAL NOTE")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .tracking(2)
+                    .font(.system(size: 14, weight: .medium))
+                Text("Optional Note")
+                    .font(.system(size: 13, weight: .medium))
             }
-            .foregroundColor(.white.opacity(0.6))
+            .foregroundColor(.secondary)
 
             TextField("What did you see or learn?", text: $viewModel.note, axis: .vertical)
-                .font(.system(size: 16, weight: .medium))
+                .font(.system(size: 15, weight: .regular))
                 .foregroundColor(.white)
                 .lineLimit(3...5)
-                .padding(16)
+                .padding(12)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.08))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.electricBlue.opacity(0.3), lineWidth: 1)
-                        )
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white.opacity(0.05))
                 )
         }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 20)
-        .glassmorphicCard(cornerRadius: 20, shadowRadius: 20)
+        .modernCard(padding: 16)
         .padding(.horizontal)
     }
 
     // MARK: - Bottom Actions
 
     private var bottomActions: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
             // Primary dismiss button
             Button(action: {
                 HapticsManager.shared.success()
                 viewModel.dismiss()
                 dismiss()
             }) {
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     Image(systemName: viewModel.canDismiss ? "checkmark.circle.fill" : "lock.fill")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 16, weight: .semibold))
 
                     Text(viewModel.canDismiss ? "Continue" : "Complete Task First")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .tracking(1)
+                        .font(.system(size: 16, weight: .semibold))
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 20)
+                .padding(.vertical, 14)
                 .background(
-                    ZStack {
-                        if viewModel.canDismiss {
-                            // Gradient background with shimmer
-                            LinearGradient(
-                                colors: [Color.electricBlue, Color.neonPurple],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-
-                            LinearGradient(
-                                colors: [
-                                    .clear,
-                                    .white.opacity(0.3),
-                                    .clear
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                            .shimmer()
-                        } else {
-                            // Disabled state
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        }
-                    }
+                    viewModel.canDismiss ?
+                    LinearGradient(
+                        colors: [.electricBlue, .neonPurple],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    ) :
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.1), Color.white.opacity(0.05)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
                 )
-                .cornerRadius(18)
-                .neonGlow(color: viewModel.canDismiss ? .electricBlue : .clear, radius: viewModel.canDismiss ? 15 : 0)
+                .cornerRadius(12)
             }
             .disabled(!viewModel.canDismiss)
 
@@ -529,23 +356,23 @@ struct InterventionView: View {
                 HapticsManager.shared.lightTap()
                 // TODO: Phase 3 - Share functionality
             }) {
-                HStack(spacing: 10) {
+                HStack(spacing: 8) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 14, weight: .medium))
 
                     Text("Share this roast")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.system(size: 15, weight: .medium))
                 }
                 .foregroundColor(.electricBlue)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
+                .padding(.vertical, 12)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(Color.white.opacity(0.05))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.electricBlue.opacity(0.5), lineWidth: 2)
-                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.electricBlue.opacity(0.5), lineWidth: 1)
                 )
             }
         }

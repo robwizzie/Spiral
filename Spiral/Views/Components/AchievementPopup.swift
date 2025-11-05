@@ -17,158 +17,133 @@ struct AchievementPopup: View {
 
     var body: some View {
         ZStack {
-            // Blurred background with animated gradient
-            ZStack {
-                AnimatedGradientBackground(speed: 15.0)
-                    .blur(radius: 20)
-                Color.black.opacity(0.6)
-            }
-            .ignoresSafeArea()
-            .onTapGesture {
-                dismiss()
-            }
+            // Blurred background
+            Color.black.opacity(0.75)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    dismiss()
+                }
 
-            // Popup card with enhanced visuals
-            VStack(spacing: 24) {
-                // Massive trophy icon with glow and pulse
+            // Popup card
+            VStack(spacing: 20) {
+                // Trophy icon with subtle glow
                 ZStack {
-                    // Outer glow ring
                     Circle()
                         .fill(
                             RadialGradient(
                                 colors: [
-                                    (achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.4),
+                                    (achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.2),
                                     .clear
                                 ],
                                 center: .center,
-                                startRadius: 50,
-                                endRadius: 120
+                                startRadius: 30,
+                                endRadius: 80
                             )
                         )
-                        .frame(width: 240, height: 240)
-                        .pulse(from: 0.9, to: 1.1, duration: 2)
+                        .frame(width: 160, height: 160)
+                        .subtlePulse(duration: 2.0)
 
                     Text("🏆")
-                        .font(.system(size: 90))
-                        .shadow(color: (achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.8), radius: 30)
+                        .font(.system(size: 64))
                 }
 
-                // Achievement unlocked text with gradient and glow
+                // Achievement unlocked text
                 Text("ACHIEVEMENT UNLOCKED")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
-                    .tracking(4)
-                    .gradientForeground(colors: [
-                        achievement.isPositive ? .successGreen : .warningOrange,
-                        .electricBlue
-                    ])
-                    .neonGlow(color: achievement.isPositive ? .successGreen : .warningOrange, radius: 12)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .tracking(3)
+                    .foregroundColor(achievement.isPositive ? .successGreen : .warningOrange)
 
-                // Achievement name with emoji - BIGGER
-                VStack(spacing: 10) {
+                // Achievement name with emoji
+                VStack(spacing: 8) {
                     Text(achievement.emoji)
-                        .font(.system(size: 56))
+                        .font(.system(size: 40))
 
                     Text(achievement.displayName)
-                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                        .lineSpacing(4)
                 }
 
-                // Description with better styling
+                // Description
                 Text(achievement.description)
-                    .font(.system(size: 17, weight: .medium))
-                    .foregroundColor(.white.opacity(0.9))
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(3)
+                    .lineSpacing(2)
                     .padding(.horizontal, 10)
 
                 // Divider
                 Divider()
-                    .background(Color.white.opacity(0.3))
+                    .background(Color.white.opacity(0.2))
                     .padding(.horizontal, 20)
 
-                // Rarity/Type indicator with badge
+                // Rarity/Type indicator
                 Text(achievement.isPositive ? "You're crushing it! 💪" : "Uhh... congrats? 😅")
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
                     .background(
                         Capsule()
-                            .fill((achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.2))
-                            .overlay(
-                                Capsule()
-                                    .stroke(achievement.isPositive ? Color.successGreen : Color.warningOrange, lineWidth: 2)
-                            )
+                            .fill((achievement.isPositive ? Color.successGreen : Color.warningOrange).opacity(0.15))
                     )
 
-                // Action buttons with enhanced styling
-                VStack(spacing: 12) {
-                    // Share button with shimmer
+                // Action buttons
+                VStack(spacing: 10) {
                     Button(action: {
                         HapticsManager.shared.mediumImpact()
                         onShare()
                     }) {
-                        HStack(spacing: 10) {
+                        HStack(spacing: 8) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 18, weight: .bold))
+                                .font(.system(size: 15, weight: .semibold))
                             Text("Share Achievement")
-                                .font(.system(size: 17, weight: .bold, design: .rounded))
-                                .tracking(1)
+                                .font(.system(size: 16, weight: .semibold))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, 14)
                         .background(
-                            ZStack {
-                                LinearGradient(
-                                    colors: [Color.electricBlue, Color.neonPurple],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-
-                                LinearGradient(
-                                    colors: [
-                                        .clear,
-                                        .white.opacity(0.3),
-                                        .clear
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                                .shimmer()
-                            }
+                            LinearGradient(
+                                colors: [.electricBlue, .neonPurple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                        .cornerRadius(16)
-                        .neonGlow(color: .electricBlue, radius: 12)
+                        .cornerRadius(12)
                     }
 
-                    // Dismiss button
                     Button(action: {
                         HapticsManager.shared.lightTap()
                         dismiss()
                     }) {
                         Text("Cool, thanks")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.electricBlue)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
+                            .padding(.vertical, 12)
                             .background(
-                                RoundedRectangle(cornerRadius: 14)
+                                RoundedRectangle(cornerRadius: 12)
                                     .fill(Color.white.opacity(0.05))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color.electricBlue.opacity(0.5), lineWidth: 2)
-                                    )
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(Color.electricBlue.opacity(0.5), lineWidth: 1)
                             )
                     }
                 }
             }
-            .padding(.vertical, 40)
+            .padding(28)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(Color(.systemGray6).opacity(0.5))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                    .strokeBorder(Color.white.opacity(0.1), lineWidth: 0.5)
+            )
+            .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
             .padding(.horizontal, 30)
-            .glassmorphicCard(cornerRadius: 28, shadowRadius: 40)
-            .padding(.horizontal, 35)
             .scaleEffect(scale)
             .opacity(opacity)
         }

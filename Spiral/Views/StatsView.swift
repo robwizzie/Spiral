@@ -28,64 +28,19 @@ struct StatsView: View {
 
     var body: some View {
         ZStack {
-            // Animated gradient background
-            AnimatedGradientBackground()
-
-            // Floating particles
-            ParticleField(count: 15)
-                .opacity(0.3)
+            CleanBackground()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 30) {
-                    // Header with title
-                    VStack(spacing: 12) {
-                        Text("YOUR STATS")
-                            .font(.system(size: 36, weight: .black, design: .rounded))
-                            .tracking(3)
-                            .gradientForeground(colors: [.electricBlue, .neonPurple, .electricBlue])
-                            .neonGlow(color: .electricBlue, radius: 15)
-
-                        Text("Track your progress")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white.opacity(0.7))
-                    }
-                    .padding(.top, 20)
-
-                    // Time range picker with custom styling
-                    HStack(spacing: 12) {
+                VStack(spacing: 24) {
+                    // Time range picker
+                    Picker("Range", selection: $selectedRange) {
                         ForEach(TimeRange.allCases, id: \.self) { range in
-                            Button(action: {
-                                HapticsManager.shared.lightTap()
-                                selectedRange = range
-                            }) {
-                                Text(range.rawValue)
-                                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                                    .foregroundColor(selectedRange == range ? .white : .white.opacity(0.6))
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 12)
-                                    .background(
-                                        ZStack {
-                                            if selectedRange == range {
-                                                LinearGradient(
-                                                    colors: [.electricBlue, .neonPurple],
-                                                    startPoint: .leading,
-                                                    endPoint: .trailing
-                                                )
-                                                .cornerRadius(12)
-                                                .neonGlow(color: .electricBlue, radius: 8)
-                                            } else {
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .fill(Color.white.opacity(0.08))
-                                            }
-                                        }
-                                    )
-                            }
+                            Text(range.rawValue).tag(range)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .glassmorphicCard(cornerRadius: 16, shadowRadius: 15)
+                    .pickerStyle(.segmented)
                     .padding(.horizontal)
+                    .padding(.top, 8)
 
                     // Time saved card
                     timeSavedCard
@@ -106,21 +61,18 @@ struct StatsView: View {
 
                     Spacer(minLength: 30)
                 }
-                .padding(.horizontal, 5)
             }
         }
-        .navigationTitle("")
+        .navigationTitle("Stats")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    HapticsManager.shared.lightTap()
                     // TODO: Share functionality
                 }) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.electricBlue)
-                        .neonGlow(color: .electricBlue, radius: 8)
                 }
             }
         }
@@ -129,64 +81,53 @@ struct StatsView: View {
     // MARK: - Time Saved Card
 
     private var timeSavedCard: some View {
-        VStack(spacing: 20) {
-            Text("⏰ TIME SAVED THIS WEEK")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .tracking(3)
-                .foregroundColor(.white.opacity(0.7))
+        VStack(spacing: 16) {
+            Text("TIME SAVED THIS WEEK")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .tracking(2)
+                .foregroundColor(.secondary)
 
-            // Massive time display with glow
-            ZStack {
-                Text(viewModel.timeSavedFormatted)
-                    .font(.system(size: 72, weight: .black, design: .rounded))
-                    .foregroundColor(.successGreen)
-                    .blur(radius: 30)
-                    .opacity(0.6)
-
-                Text(viewModel.timeSavedFormatted)
-                    .font(.system(size: 72, weight: .black, design: .rounded))
-                    .gradientForeground(colors: [.successGreen, .electricBlue])
-                    .neonGlow(color: .successGreen, radius: 15)
-            }
+            // Large time display
+            Text(viewModel.timeSavedFormatted)
+                .font(.system(size: 52, weight: .bold, design: .rounded))
+                .foregroundColor(.successGreen)
 
             Divider()
                 .background(Color.white.opacity(0.2))
                 .padding(.horizontal, 20)
 
-            VStack(spacing: 12) {
+            VStack(spacing: 8) {
                 Text("That's like...")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.secondary)
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(viewModel.timeSavedComparisons, id: \.self) { comparison in
-                        HStack(spacing: 10) {
+                        HStack(spacing: 8) {
                             Circle()
                                 .fill(Color.successGreen)
-                                .frame(width: 6, height: 6)
+                                .frame(width: 4, height: 4)
 
                             Text(comparison)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(.system(size: 15, weight: .regular))
                                 .foregroundColor(.white)
                         }
                     }
                 }
             }
         }
-        .padding(.vertical, 30)
-        .padding(.horizontal, 25)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 30)
+        .modernCard(padding: 24)
         .padding(.horizontal)
     }
 
     // MARK: - Doom Score Trend Card
 
     private var doomScoreTrendCard: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text("📊 DOOM SCORE TREND")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .tracking(3)
-                .foregroundColor(.white.opacity(0.7))
+        VStack(alignment: .leading, spacing: 16) {
+            Text("DOOM SCORE TREND")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .tracking(2)
+                .foregroundColor(.secondary)
 
             if !viewModel.dailyScores.isEmpty {
                 Chart(viewModel.dailyScores) { score in
@@ -201,13 +142,7 @@ struct StatsView: View {
                             endPoint: .trailing
                         )
                     )
-                    .lineStyle(StrokeStyle(lineWidth: 4, lineCap: .round))
-                    .symbol {
-                        Circle()
-                            .fill(Color.electricBlue)
-                            .frame(width: 8, height: 8)
-                            .shadow(color: .electricBlue.opacity(0.8), radius: 4)
-                    }
+                    .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
 
                     AreaMark(
                         x: .value("Day", score.date, unit: .day),
@@ -216,8 +151,8 @@ struct StatsView: View {
                     .foregroundStyle(
                         LinearGradient(
                             colors: [
-                                .electricBlue.opacity(0.5),
-                                .neonPurple.opacity(0.3),
+                                .electricBlue.opacity(0.3),
+                                .neonPurple.opacity(0.1),
                                 .clear
                             ],
                             startPoint: .top,
@@ -225,157 +160,143 @@ struct StatsView: View {
                         )
                     )
                 }
-                .frame(height: 220)
+                .frame(height: 180)
                 .chartYScale(domain: 0...10)
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .day)) { _ in
-                        AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [4]))
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
                             .foregroundStyle(Color.white.opacity(0.1))
-                        AxisTick()
-                            .foregroundStyle(Color.white.opacity(0.3))
                         AxisValueLabel(format: .dateTime.weekday(.narrow))
-                            .foregroundStyle(Color.white.opacity(0.6))
-                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Color.secondary)
+                            .font(.system(size: 11))
                     }
                 }
                 .chartYAxis {
-                    AxisMarks(position: .leading) { value in
-                        AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [4]))
+                    AxisMarks(position: .leading) { _ in
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
                             .foregroundStyle(Color.white.opacity(0.1))
-                        AxisTick()
-                            .foregroundStyle(Color.white.opacity(0.3))
                         AxisValueLabel()
-                            .foregroundStyle(Color.white.opacity(0.6))
-                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Color.secondary)
+                            .font(.system(size: 11))
                     }
                 }
-                .padding(.top, 8)
 
                 Divider()
                     .background(Color.white.opacity(0.2))
 
-                HStack(spacing: 16) {
-                    HStack(spacing: 8) {
-                        Image(systemName: viewModel.averageDoomScore < 5 ? "arrow.down.right.circle.fill" : "arrow.up.right.circle.fill")
-                            .font(.system(size: 20, weight: .bold))
+                HStack {
+                    HStack(spacing: 6) {
+                        Image(systemName: viewModel.averageDoomScore < 5 ? "arrow.down.circle.fill" : "arrow.up.circle.fill")
+                            .font(.system(size: 16))
                             .foregroundColor(viewModel.averageDoomScore < 5 ? .successGreen : .warningOrange)
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Average")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.white.opacity(0.6))
-                            Text("\(String(format: "%.1f", viewModel.averageDoomScore))/10")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                        }
+                        Text("Avg: \(String(format: "%.1f", viewModel.averageDoomScore))/10")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white)
                     }
 
                     Spacer()
 
-                    Text(viewModel.averageDoomScore < 5 ? "📈 Improving!" : "📊 Room to grow")
-                        .font(.system(size: 14, weight: .semibold))
+                    Text(viewModel.averageDoomScore < 5 ? "Improving" : "Room to grow")
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundColor(viewModel.averageDoomScore < 5 ? .successGreen : .warningOrange)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
                         .background(
                             Capsule()
                                 .fill((viewModel.averageDoomScore < 5 ? Color.successGreen : Color.warningOrange).opacity(0.15))
                         )
                 }
-                .padding(.top, 4)
             } else {
                 VStack(spacing: 12) {
-                    Text("📭")
-                        .font(.system(size: 50))
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .font(.system(size: 32, weight: .medium))
+                        .foregroundColor(.secondary)
 
                     Text("No data yet")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.7))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.secondary)
 
                     Text("Keep using Spiral to see your trends!")
                         .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundColor(.secondary.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
-                .frame(height: 200)
+                .frame(height: 180)
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.vertical, 25)
-        .padding(.horizontal, 25)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 30)
+        .modernCard(padding: 20)
         .padding(.horizontal)
     }
 
     // MARK: - Intervention Stats Card
 
     private var interventionStatsCard: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             // Interventions
-            VStack(spacing: 14) {
+            VStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(Color.electricBlue.opacity(0.2))
-                        .frame(width: 60, height: 60)
+                        .fill(Color.electricBlue.opacity(0.15))
+                        .frame(width: 50, height: 50)
 
                     Image(systemName: "hand.raised.fill")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.electricBlue)
                 }
 
                 Text("\(viewModel.interventionsToday)")
-                    .font(.system(size: 40, weight: .black, design: .rounded))
-                    .gradientForeground(colors: [.electricBlue, .neonPurple])
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
 
                 Text("Interventions")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
 
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.down.circle.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundColor(.successGreen)
-                    Text("30% vs last")
+                    Text("30%")
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(.secondary)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .glassmorphicCard(cornerRadius: 18, shadowRadius: 20)
+            .modernCard(padding: 16)
 
             // Successful Breaks
-            VStack(spacing: 14) {
+            VStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(Color.successGreen.opacity(0.2))
-                        .frame(width: 60, height: 60)
+                        .fill(Color.successGreen.opacity(0.15))
+                        .frame(width: 50, height: 50)
 
                     Image(systemName: "checkmark.shield.fill")
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.successGreen)
                 }
 
                 Text("\(max(viewModel.interventionsToday - 2, 0))")
-                    .font(.system(size: 40, weight: .black, design: .rounded))
-                    .gradientForeground(colors: [.successGreen, .electricBlue])
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
 
                 Text("Successful")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
 
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.up.circle.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundColor(.successGreen)
-                    Text("12% vs last")
+                    Text("12%")
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(.secondary)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-            .glassmorphicCard(cornerRadius: 18, shadowRadius: 20)
+            .modernCard(padding: 16)
         }
         .padding(.horizontal)
     }
@@ -383,75 +304,46 @@ struct StatsView: View {
     // MARK: - App Breakdown Card
 
     private var appBreakdownCard: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("📱 TOP DOOM SCROLL APPS")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .tracking(3)
-                .foregroundColor(.white.opacity(0.7))
+        VStack(alignment: .leading, spacing: 16) {
+            Text("TOP DOOM SCROLL APPS")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .tracking(2)
+                .foregroundColor(.secondary)
 
-            VStack(spacing: 16) {
+            VStack(spacing: 14) {
                 ForEach(Array(viewModel.topApps.prefix(3).enumerated()), id: \.element.id) { index, app in
-                    VStack(spacing: 10) {
+                    VStack(spacing: 8) {
                         HStack(spacing: 12) {
-                            // Rank badge
+                            // Rank
                             ZStack {
                                 Circle()
-                                    .fill(
-                                        index == 0 ? Color.warningOrange.opacity(0.2) :
-                                        index == 1 ? Color.electricBlue.opacity(0.2) :
-                                        Color.neonPurple.opacity(0.2)
-                                    )
-                                    .frame(width: 36, height: 36)
+                                    .fill(Color.white.opacity(0.1))
+                                    .frame(width: 28, height: 28)
 
                                 Text("#\(index + 1)")
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                                    .foregroundColor(
-                                        index == 0 ? .warningOrange :
-                                        index == 1 ? .electricBlue :
-                                        .neonPurple
-                                    )
+                                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
                             }
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text(app.appName)
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(.system(size: 15, weight: .medium))
                                     .foregroundColor(.white)
 
-                                Text("\(Int(app.percentage * 100))% of total time")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.6))
+                                Text("\(Int(app.percentage * 100))% of time")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
                             }
 
                             Spacer()
 
                             Text(app.durationFormatted)
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 .foregroundColor(.electricBlue)
                         }
 
-                        // Enhanced progress bar
-                        GeometryReader { geometry in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color.white.opacity(0.1))
-                                    .frame(height: 6)
-
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [
-                                                index == 0 ? .warningOrange : .electricBlue,
-                                                .neonPurple
-                                            ],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
-                                    .frame(width: geometry.size.width * app.percentage, height: 6)
-                                    .shadow(color: (index == 0 ? Color.warningOrange : Color.electricBlue).opacity(0.6), radius: 4)
-                            }
-                        }
-                        .frame(height: 6)
+                        ProgressView(value: app.percentage)
+                            .tint(.electricBlue)
                     }
 
                     if index < 2 {
@@ -461,63 +353,44 @@ struct StatsView: View {
                 }
             }
         }
-        .padding(.vertical, 25)
-        .padding(.horizontal, 25)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 30)
+        .modernCard(padding: 20)
         .padding(.horizontal)
     }
 
     // MARK: - Percentile Card
 
     private var percentileCard: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Text("🎯")
-                .font(.system(size: 60))
+                .font(.system(size: 44))
 
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Text("TOP")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .tracking(2)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(.secondary)
 
-                ZStack {
-                    Text("\(viewModel.percentile)%")
-                        .font(.system(size: 68, weight: .black, design: .rounded))
-                        .foregroundColor(.successGreen)
-                        .blur(radius: 25)
-                        .opacity(0.6)
-
-                    Text("\(viewModel.percentile)%")
-                        .font(.system(size: 68, weight: .black, design: .rounded))
-                        .gradientForeground(colors: [.successGreen, .electricBlue])
-                        .neonGlow(color: .successGreen, radius: 12)
-                }
-            }
-
-            VStack(spacing: 8) {
-                Text("\(100 - viewModel.percentile)% of users doom scroll more")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.white.opacity(0.8))
-                    .multilineTextAlignment(.center)
-
-                Text("Keep crushing it! 💪")
-                    .font(.system(size: 16, weight: .bold))
+                Text("\(viewModel.percentile)%")
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundColor(.successGreen)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        Capsule()
-                            .fill(Color.successGreen.opacity(0.15))
-                            .overlay(
-                                Capsule()
-                                    .stroke(Color.successGreen.opacity(0.5), lineWidth: 1)
-                            )
-                    )
             }
+
+            Text("\(100 - viewModel.percentile)% of users doom scroll more")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            Text("Keep it up!")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.successGreen)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    Capsule()
+                        .fill(Color.successGreen.opacity(0.15))
+                )
         }
-        .padding(.vertical, 30)
-        .padding(.horizontal, 25)
-        .glassmorphicCard(cornerRadius: 24, shadowRadius: 30)
+        .modernCard(padding: 24)
         .padding(.horizontal)
     }
 }

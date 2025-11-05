@@ -17,282 +17,190 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Animated gradient background
-                AnimatedGradientBackground()
-
-                // Floating particles for depth
-                ParticleField(count: 12)
-                    .opacity(0.4)
+                // Clean, simple background
+                CleanBackground()
 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 35) {
-                        // App title with gradient and glow
+                    VStack(spacing: 24) {
+                        // App title - clean and modern
                         Text("SPIRAL")
-                            .font(.system(size: 52, weight: .black, design: .rounded))
-                            .tracking(4)
-                            .gradientForeground(colors: [.electricBlue, .neonPurple, .electricBlue])
-                            .neonGlow(color: .electricBlue, radius: 20)
-                            .padding(.top, 40)
+                            .font(.system(size: 32, weight: .heavy, design: .rounded))
+                            .tracking(2)
+                            .foregroundColor(.white)
+                            .padding(.top, 20)
 
-                        // Spiral animation with dramatic glow
+                        // Spiral animation - clean and centered
                         ZStack {
-                            // Outer glow ring
+                            // Subtle glow behind spiral
                             Circle()
                                 .fill(
                                     RadialGradient(
                                         colors: [
-                                            Color.electricBlue.opacity(0.4),
-                                            Color.neonPurple.opacity(0.2),
+                                            Color.electricBlue.opacity(0.2),
                                             .clear
                                         ],
                                         center: .center,
-                                        startRadius: 90,
-                                        endRadius: 180
+                                        startRadius: 50,
+                                        endRadius: 120
                                     )
                                 )
-                                .frame(width: 360, height: 360)
-                                .pulse(from: 0.9, to: 1.1, duration: 3)
+                                .frame(width: 240, height: 240)
 
-                            // Inner glow
-                            Circle()
-                                .fill(
-                                    RadialGradient(
-                                        colors: [
-                                            Color.electricBlue.opacity(0.6),
-                                            .clear
-                                        ],
-                                        center: .center,
-                                        startRadius: 0,
-                                        endRadius: 100
-                                    )
-                                )
-                                .frame(width: 200, height: 200)
-                                .blur(radius: 20)
-
-                            SpiralAnimation(state: .idle, size: 180)
-                                .neonGlow(color: .electricBlue, radius: 25)
+                            SpiralAnimation(state: .idle, size: 140)
+                                .subtleGlow(color: .electricBlue, radius: 6)
                         }
-                        .padding(.bottom, 10)
+                        .padding(.vertical, 10)
 
                         // Stats cards
                         if let stats = statsViewModel {
-                            // Doom Score Card - DRAMATIC
-                            VStack(spacing: 16) {
+                            // Doom Score Card - hero element
+                            VStack(spacing: 20) {
                                 Text("TODAY'S DOOM SCORE")
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                                    .tracking(3)
-                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                    .tracking(2)
+                                    .foregroundColor(.secondary)
 
-                                // Massive score display
-                                ZStack {
-                                    // Glow behind score
+                                // Clean score display
+                                HStack(alignment: .firstTextBaseline, spacing: 4) {
                                     Text("\(stats.doomScore)")
-                                        .font(.system(size: 120, weight: .black, design: .rounded))
+                                        .font(.system(size: 64, weight: .bold, design: .rounded))
                                         .foregroundColor(doomScoreColor(stats.doomScore))
-                                        .blur(radius: 40)
-                                        .opacity(0.6)
 
-                                    Text("\(stats.doomScore)")
-                                        .font(.system(size: 120, weight: .black, design: .rounded))
-                                        .gradientForeground(colors: [
-                                            doomScoreColor(stats.doomScore),
-                                            doomScoreColor(stats.doomScore).opacity(0.7)
-                                        ])
-                                        .neonGlow(color: doomScoreColor(stats.doomScore), radius: 15)
+                                    Text("/10")
+                                        .font(.system(size: 24, weight: .medium))
+                                        .foregroundColor(.secondary)
                                 }
 
-                                Text("/10")
-                                    .font(.system(size: 32, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.5))
-                                    .offset(y: -20)
-
-                                // Custom progress ring
-                                ZStack {
-                                    // Background ring
-                                    Circle()
-                                        .stroke(Color.white.opacity(0.1), lineWidth: 12)
-                                        .frame(width: 200, height: 200)
-
-                                    // Progress ring with gradient
-                                    Circle()
-                                        .trim(from: 0, to: CGFloat(stats.doomScore) / 10.0)
-                                        .stroke(
-                                            AngularGradient(
-                                                colors: [
-                                                    doomScoreColor(stats.doomScore),
-                                                    doomScoreColor(stats.doomScore).opacity(0.5),
-                                                    doomScoreColor(stats.doomScore)
-                                                ],
-                                                center: .center
-                                            ),
-                                            style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                                        )
-                                        .frame(width: 200, height: 200)
-                                        .rotationEffect(.degrees(-90))
-                                        .shadow(color: doomScoreColor(stats.doomScore).opacity(0.8), radius: 10)
-                                }
-                                .padding(.vertical, 8)
+                                // Simple progress indicator
+                                ProgressView(value: Double(stats.doomScore), total: 10)
+                                    .tint(doomScoreColor(stats.doomScore))
+                                    .scaleEffect(x: 1, y: 2, anchor: .center)
+                                    .padding(.horizontal, 30)
 
                                 // Score message
                                 Text(stats.doomScoreMessage)
-                                    .font(.system(size: 24, weight: .semibold, design: .rounded))
+                                    .font(.system(size: 17, weight: .medium))
                                     .foregroundColor(.white)
                                     .multilineTextAlignment(.center)
 
                                 // Percentile badge
-                                HStack(spacing: 8) {
+                                HStack(spacing: 6) {
                                     Image(systemName: "chart.line.uptrend.xyaxis")
-                                        .font(.system(size: 16, weight: .semibold))
+                                        .font(.system(size: 13, weight: .medium))
                                     Text(stats.percentileMessage)
-                                        .font(.system(size: 15, weight: .medium))
+                                        .font(.system(size: 14, weight: .medium))
                                 }
                                 .foregroundColor(.electricBlue)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 10)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 6)
                                 .background(
                                     Capsule()
                                         .fill(Color.electricBlue.opacity(0.15))
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.electricBlue.opacity(0.5), lineWidth: 1)
-                                        )
                                 )
                             }
-                            .padding(.vertical, 30)
-                            .padding(.horizontal, 25)
-                            .glassmorphicCard(cornerRadius: 24, shadowRadius: 30)
+                            .modernCard(padding: 24)
                             .padding(.horizontal)
 
-                            // Streak Card - BOLD
-                            HStack(spacing: 20) {
-                                // Flame icon with pulse
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.warningOrange.opacity(0.2))
-                                        .frame(width: 70, height: 70)
-                                        .pulse(from: 1.0, to: 1.1, duration: 1.5)
+                            // Streak Card - clean and simple
+                            HStack(spacing: 16) {
+                                Text("🔥")
+                                    .font(.system(size: 32))
 
-                                    Text("🔥")
-                                        .font(.system(size: 40))
-                                }
-
-                                VStack(alignment: .leading, spacing: 6) {
-                                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack(alignment: .firstTextBaseline, spacing: 4) {
                                         Text("\(stats.currentStreak)")
-                                            .font(.system(size: 48, weight: .black, design: .rounded))
-                                            .gradientForeground(colors: [.warningOrange, .alertRed])
+                                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                                            .foregroundColor(.white)
 
                                         Text("days")
-                                            .font(.system(size: 20, weight: .medium))
-                                            .foregroundColor(.white.opacity(0.6))
+                                            .font(.system(size: 16, weight: .medium))
+                                            .foregroundColor(.secondary)
                                     }
 
                                     Text("Current Streak")
-                                        .font(.system(size: 14, weight: .semibold))
-                                        .foregroundColor(.white.opacity(0.7))
-
-                                    Text("Best: \(stats.longestStreak) days")
-                                        .font(.system(size: 12, weight: .medium))
-                                        .foregroundColor(.electricBlue)
+                                        .font(.system(size: 13, weight: .medium))
+                                        .foregroundColor(.secondary)
                                 }
 
                                 Spacer()
-                            }
-                            .padding(20)
-                            .glassmorphicCard(cornerRadius: 20, shadowRadius: 20)
-                            .padding(.horizontal)
 
-                            // Quick Stats Grid
-                            VStack(spacing: 16) {
-                                Text("QUICK STATS")
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                                    .tracking(3)
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                VStack(alignment: .trailing, spacing: 4) {
+                                    Text("\(stats.longestStreak)")
+                                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                                        .foregroundColor(.electricBlue)
 
-                                VStack(spacing: 12) {
-                                    statRow(
-                                        icon: "hand.raised.fill",
-                                        label: "Interventions",
-                                        value: "\(stats.interventionsToday)",
-                                        color: .electricBlue
-                                    )
-
-                                    Divider()
-                                        .background(Color.white.opacity(0.1))
-
-                                    statRow(
-                                        icon: "clock.fill",
-                                        label: "Time Saved",
-                                        value: stats.timeSavedFormatted,
-                                        color: .successGreen
-                                    )
-
-                                    Divider()
-                                        .background(Color.white.opacity(0.1))
-
-                                    statRow(
-                                        icon: "trophy.fill",
-                                        label: "Rank",
-                                        value: "Top \(stats.percentile)%",
-                                        color: .neonPurple
-                                    )
+                                    Text("best")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.secondary)
                                 }
                             }
-                            .padding(20)
-                            .glassmorphicCard(cornerRadius: 20, shadowRadius: 20)
+                            .modernCard()
                             .padding(.horizontal)
 
-                            // View Full Stats Button - BOLD
-                            NavigationLink(destination: StatsView(viewModel: stats)) {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "chart.bar.fill")
-                                        .font(.system(size: 20, weight: .bold))
+                            // Quick Stats
+                            VStack(spacing: 16) {
+                                statRow(
+                                    icon: "hand.raised.fill",
+                                    label: "Interventions Today",
+                                    value: "\(stats.interventionsToday)",
+                                    color: .electricBlue
+                                )
 
-                                    Text("VIEW FULL STATS")
-                                        .font(.system(size: 17, weight: .bold, design: .rounded))
-                                        .tracking(1)
+                                Divider()
+                                    .background(Color.white.opacity(0.1))
+
+                                statRow(
+                                    icon: "clock.fill",
+                                    label: "Time Saved",
+                                    value: stats.timeSavedFormatted,
+                                    color: .successGreen
+                                )
+
+                                Divider()
+                                    .background(Color.white.opacity(0.1))
+
+                                statRow(
+                                    icon: "trophy.fill",
+                                    label: "Your Rank",
+                                    value: "Top \(stats.percentile)%",
+                                    color: .neonPurple
+                                )
+                            }
+                            .modernCard()
+                            .padding(.horizontal)
+
+                            // View Full Stats Button
+                            NavigationLink(destination: StatsView(viewModel: stats)) {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "chart.bar.fill")
+                                        .font(.system(size: 16, weight: .semibold))
+
+                                    Text("View Full Stats")
+                                        .font(.system(size: 16, weight: .semibold))
                                 }
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 18)
+                                .padding(.vertical, 14)
                                 .background(
-                                    ZStack {
-                                        // Gradient background
-                                        LinearGradient(
-                                            colors: [Color.electricBlue, Color.neonPurple],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-
-                                        // Shimmer effect
-                                        LinearGradient(
-                                            colors: [
-                                                .clear,
-                                                .white.opacity(0.3),
-                                                .clear
-                                            ],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                        .shimmer()
-                                    }
+                                    LinearGradient(
+                                        colors: [.electricBlue, .neonPurple],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                                .cornerRadius(16)
-                                .neonGlow(color: .electricBlue, radius: 12)
+                                .cornerRadius(12)
                             }
                             .padding(.horizontal)
                         }
 
-                        // Dev test button (subtle)
+                        // Dev test button
                         Button("Test Intervention") {
                             showingIntervention = true
                         }
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.white.opacity(0.3))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.secondary)
                         .padding(.bottom, 30)
                     }
-                    .padding(.horizontal, 5)
                 }
             }
             .navigationTitle("")
@@ -301,9 +209,8 @@ struct HomeView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {}) {
                         Image(systemName: "gearshape.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.system(size: 18, weight: .medium))
                             .foregroundColor(.electricBlue)
-                            .neonGlow(color: .electricBlue, radius: 8)
                     }
                 }
             }
@@ -332,33 +239,32 @@ struct HomeView: View {
     // MARK: - Helper Views
 
     private func statRow(icon: String, label: String, value: String, color: Color) -> some View {
-        HStack(spacing: 16) {
-            // Icon with background
+        HStack(spacing: 14) {
             ZStack {
                 Circle()
-                    .fill(color.opacity(0.2))
-                    .frame(width: 44, height: 44)
+                    .fill(color.opacity(0.15))
+                    .frame(width: 40, height: 40)
 
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundColor(color)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(label)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(.secondary)
 
                 Text(value)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white.opacity(0.3))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.secondary.opacity(0.5))
         }
     }
 
