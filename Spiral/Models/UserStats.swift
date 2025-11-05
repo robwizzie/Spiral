@@ -103,7 +103,7 @@ extension UserStats {
         // Factor 1: Total doom scroll time (0-4 points)
         let totalDoomTime = sessions.reduce(0) { $0 + $1.duration }
         for range in AppConstants.doomScoreTimeRanges {
-            if totalDoomTime >= range.min && totalDoomTime < range.max {
+            if totalDoomTime >= Double(range.min) && totalDoomTime < Double(range.max) {
                 score += range.points
                 break
             }
