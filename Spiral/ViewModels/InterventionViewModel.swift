@@ -185,36 +185,23 @@ class InterventionViewModel: ObservableObject {
     // MARK: - Haptics & Sound
 
     func triggerHaptics() {
-        let generator: UINotificationFeedbackGenerator
-
         switch mode {
         case .gentle:
-            generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.warning)
+            HapticsManager.shared.playGentlePattern()
 
         case .accountability:
-            let impact = UIImpactFeedbackGenerator(style: .medium)
-            impact.impactOccurred()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                impact.impactOccurred()
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                impact.impactOccurred()
-            }
+            HapticsManager.shared.playAccountabilityPattern()
 
         case .lockdown:
-            let impact = UIImpactFeedbackGenerator(style: .heavy)
-            for i in 0..<5 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.2) {
-                    impact.impactOccurred(intensity: 1.0)
-                }
-            }
+            HapticsManager.shared.playLockdownPattern()
         }
+
+        // Also play spiral breaking haptic
+        HapticsManager.shared.playSpiralBreakPattern()
     }
 
     func playSound() {
-        // Would integrate with SoundManager
-        // SoundManager.shared.play(.intervention)
+        SoundManager.shared.play(.intervention)
     }
 
     // MARK: - Formatted Properties

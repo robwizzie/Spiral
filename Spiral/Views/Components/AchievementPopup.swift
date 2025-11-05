@@ -112,9 +112,9 @@ struct AchievementPopup: View {
                 opacity = 1.0
             }
 
-            // Haptic feedback
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
+            // Haptic feedback and sound
+            HapticsManager.shared.playAchievementPattern()
+            SoundManager.shared.play(.achievement)
 
             // Confetti effect would go here in full implementation
         }

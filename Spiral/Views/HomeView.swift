@@ -28,20 +28,8 @@ struct HomeView: View {
                             .font(.system(size: 36, weight: .bold))
                             .foregroundColor(Color.electricBlue)
 
-                        // Spiral animation (placeholder - breathing state)
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.electricBlue, Color.neonPurple],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: 150, height: 150)
-                            .overlay(
-                                Text("🌀")
-                                    .font(.system(size: 60))
-                            )
+                        // Spiral animation - breathing state
+                        SpiralAnimation(state: .idle, size: 150)
 
                         // Doom Score Card
                         if let stats = statsViewModel {
