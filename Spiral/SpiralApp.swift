@@ -15,6 +15,7 @@ struct SpiralApp: App {
             AppSettings.self,
             ScrollSession.self,
             UserStats.self,
+            UserAchievement.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
