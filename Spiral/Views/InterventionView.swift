@@ -20,9 +20,8 @@ struct InterventionView: View {
                 VStack(spacing: 28) {
                     Spacer(minLength: 30)
 
-                    // Spiral - clean and focused
-                    SpiralAnimation(state: .breaking, size: 160)
-                        .subtleGlow(color: .electricBlue, radius: 8)
+                    // Spiral - stunning breaking animation
+                    SpiralAnimation(state: .breaking, size: 180)
                         .padding(.bottom, 10)
 
                     // Header

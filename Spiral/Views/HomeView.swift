@@ -29,27 +29,9 @@ struct HomeView: View {
                             .foregroundColor(.white)
                             .padding(.top, 20)
 
-                        // Spiral animation - clean and centered
-                        ZStack {
-                            // Subtle glow behind spiral
-                            Circle()
-                                .fill(
-                                    RadialGradient(
-                                        colors: [
-                                            Color.electricBlue.opacity(0.2),
-                                            .clear
-                                        ],
-                                        center: .center,
-                                        startRadius: 50,
-                                        endRadius: 120
-                                    )
-                                )
-                                .frame(width: 240, height: 240)
-
-                            SpiralAnimation(state: .idle, size: 140)
-                                .subtleGlow(color: .electricBlue, radius: 6)
-                        }
-                        .padding(.vertical, 10)
+                        // Spiral animation - stunning centerpiece
+                        SpiralAnimation(state: .idle, size: 160)
+                            .padding(.vertical, 20)
 
                         // Stats cards
                         if let stats = statsViewModel {
