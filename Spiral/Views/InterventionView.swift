@@ -15,7 +15,7 @@ struct InterventionView: View {
         ZStack {
             // Gradient background
             LinearGradient(
-                colors: [Color("DeepPurple"), Color("NeonPurple")],
+                colors: [Color.deepPurple, Color.neonPurple],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -24,14 +24,8 @@ struct InterventionView: View {
             VStack(spacing: 20) {
                 Spacer()
 
-                // Spiral animation placeholder
-                Circle()
-                    .fill(Color("ElectricBlue"))
-                    .frame(width: 200, height: 200)
-                    .overlay(
-                        Text("🌀")
-                            .font(.system(size: 80))
-                    )
+                // Spiral animation - breaking state
+                SpiralAnimation(state: .breaking, size: 200)
 
                 // Header
                 Text(viewModel.interventionHeader)
@@ -46,7 +40,7 @@ struct InterventionView: View {
                 // Roast message
                 Text(viewModel.roastMessage)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(Color("ElectricBlue"))
+                    .foregroundColor(Color.electricBlue)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                     .fixedSize(horizontal: false, vertical: true)
